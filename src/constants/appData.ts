@@ -28,7 +28,7 @@ export const STOCKS: Stocks[] = [
   { key: "TSM", name: "tsmc", id: "TSM", label: "TSMC" },
 ];
 
-const MONTHS = [
+export const MONTHS = [
   "Jan",
   "Feb",
   "Mar",

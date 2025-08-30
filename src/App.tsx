@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Checkbox from "./components/checkbox";
 import Select from "./components/select";
-import { STOCKS, START, END } from "./constants/appData.ts";
+import { STOCKS, START, END, MONTHS } from "./constants/appData.ts";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -79,6 +79,8 @@ data = {
 
 function App() {
   const [selectedStocks, setSelectedStocks] = useState<string[]>([]);
+  const [startDate, setStartDate] = useState({ year: null, month: null });
+  const [endDate, setEndDate] = useState({ year: null, month: null });
 
   const handleCheckboxChange = (id: string) => {
     setSelectedStocks((prev) =>
@@ -88,6 +90,27 @@ function App() {
 
   const stockCountValid =
     selectedStocks.length >= 1 && selectedStocks.length <= 3;
+
+  const handleSelectChange = (value: string | number, id: string) => {
+    const [period, unit] = id.split("-");
+
+    if (period === "from") {
+      setStartDate((prev) => ({ ...prev, [unit]: value }));
+    } else {
+      setEndDate((prev) => ({ ...prev, [unit]: value }));
+    }
+  };
+
+  const present = new Date();
+
+  const dateValid =
+    startDate.year &&
+    startDate.month &&
+    endDate.year &&
+    endDate.month &&
+    new Date(startDate.year, MONTHS.indexOf(startDate.month), 1) <
+      new Date(endDate.year, MONTHS.indexOf(startDate.month), 1) &&
+    new Date(endDate.year, MONTHS.indexOf(endDate.month), 0) <= present;
 
   return (
     <>
@@ -144,6 +167,9 @@ function App() {
                   name={name}
                   id={id}
                   values={values}
+                  unit={id.split("-")[1]}
+                  valid={dateValid}
+                  onChange={(value) => handleSelectChange(value, id)}
                 />
               ))}
             </div>
@@ -154,7 +180,15 @@ function App() {
             </label>
             <div className="flex flex-row gap-2">
               {END.map(({ name, id, values }) => (
-                <Select key={`end-${id}`} name={name} id={id} values={values} />
+                <Select
+                  key={`end-${id}`}
+                  name={name}
+                  id={id}
+                  values={values}
+                  unit={id.split("-")[1]}
+                  valid={dateValid}
+                  onChange={(value) => handleSelectChange(value, id)}
+                />
               ))}
             </div>
           </div>
