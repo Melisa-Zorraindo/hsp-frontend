@@ -25,58 +25,6 @@ ChartJS.register(
   Legend
 );
 
-const options = {};
-let data = {
-  labels: [
-    "2025-07-31",
-    "2025-06-30",
-    "2025-05-30",
-    "2025-04-30",
-    "2025-03-31",
-    "2025-02-28",
-    "2025-01-31",
-    "2024-12-31",
-    "2024-11-29",
-    "2024-10-31",
-    "2024-09-30",
-  ],
-  datasets: [
-    {
-      label: "Prices",
-      data: [
-        "207.3327",
-        "204.9355",
-        "200.6204",
-        "211.9956",
-        "221.6027",
-        "241.2659",
-        "235.1815",
-        "249.5515",
-        "236.5069",
-        "224.8788",
-        "231.9365",
-      ],
-      // borderColor: "#26c6da",
-      // borderColor: "#9ae600",
-      // borderColor: "#ff8904",
-      borderColor: "#c27aff",
-    },
-  ],
-};
-
-data = {
-  labels: data.labels
-    .map((l) => {
-      const [year, month] = l.split("-");
-      return `${month}-${year}`;
-    })
-    .reverse(),
-  datasets: data.datasets.map((ds) => ({
-    ...ds,
-    data: [...ds.data].reverse(),
-  })),
-};
-
 type MonthYear = {
   year: number | null;
   month: string | null;
@@ -92,6 +40,7 @@ function App() {
     year: null,
     month: null,
   });
+  const [chartData, setChartData] = useState<any | null>(null);
 
   const handleCheckboxChange = (id: string) => {
     setSelectedStocks((prev) =>
@@ -125,6 +74,65 @@ function App() {
 
   const isValid = stockCountValid && datesValid;
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!isValid) return;
+
+    const COLORS = ["#c27aff", "#9ae600", "#ff8904"];
+    const start = `${startDate.year}-${String(
+      MONTHS.indexOf(startDate.month!) + 1
+    ).padStart(2, "0")}-01`;
+
+    if (!endDate.year || !endDate.month) {
+      throw new Error("End date is not set");
+    }
+
+    const monthIndex = MONTHS.indexOf(endDate.month);
+    const year = endDate.year;
+
+    let lastDay;
+    if (year === present.getFullYear() && monthIndex === present.getMonth()) {
+      lastDay = present.getDate();
+    } else {
+      lastDay = new Date(year, monthIndex + 1, 0).getDate();
+    }
+
+    const end = `${year}-${String(monthIndex + 1).padStart(2, "0")}-${String(
+      lastDay
+    ).padStart(2, "0")}`;
+
+    try {
+      const response = await Promise.all(
+        selectedStocks.map(async (stock) => {
+          const res = await fetch(
+            `http://localhost:8080/api/historical/${stock}/${start}/${end}?apiKey=BDaKTO4e0AN41pDBRO1ziCrDcVqlV5eQ`
+          );
+          return await res.json();
+        })
+      );
+
+      const labels = Object.keys(response[0].prices)
+        .reverse()
+        .map((l) => {
+          const [year, month] = l.split("-");
+          return `${month}-${year}`;
+        });
+
+      const datasets = response.map((json, idx) => ({
+        label: json.symbol,
+        data: Object.values(json.prices).reverse(),
+        borderColor: COLORS[idx % COLORS.length],
+      }));
+
+      setChartData({ labels, datasets });
+    } catch (err) {
+      console.error("Failed to fetch data", err);
+    }
+  };
+
+  const options = {};
+
   return (
     <>
       <div className="text-center text-slate-700">
@@ -137,7 +145,7 @@ function App() {
           movements.
         </p>
       </div>
-      <form action="">
+      <form onSubmit={handleSubmit}>
         <h2 className="pb-3 text-slate-700 border-b-2 border-slate-300 mb-5 uppercase font-bold">
           Select stocks
         </h2>
@@ -221,7 +229,7 @@ function App() {
         </div>
       </form>
       <div className="mt-20">
-        <Line options={options} data={data} />
+        {chartData && <Line options={options} data={chartData} />}
       </div>
     </>
   );
