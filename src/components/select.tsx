@@ -12,7 +12,7 @@ export default function Select({
   id: string;
   values: (string | number)[];
   unit: string;
-  valid: boolean | null;
+  valid: boolean | null | 0 | "";
   onChange: (key: string) => void;
 }): JSX.Element {
   const getBorderClass = () => {

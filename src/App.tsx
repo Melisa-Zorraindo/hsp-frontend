@@ -77,10 +77,21 @@ data = {
   })),
 };
 
+type MonthYear = {
+  year: number | null;
+  month: string | null;
+};
+
 function App() {
   const [selectedStocks, setSelectedStocks] = useState<string[]>([]);
-  const [startDate, setStartDate] = useState({ year: null, month: null });
-  const [endDate, setEndDate] = useState({ year: null, month: null });
+  const [startDate, setStartDate] = useState<MonthYear>({
+    year: null,
+    month: null,
+  });
+  const [endDate, setEndDate] = useState<MonthYear>({
+    year: null,
+    month: null,
+  });
 
   const handleCheckboxChange = (id: string) => {
     setSelectedStocks((prev) =>
