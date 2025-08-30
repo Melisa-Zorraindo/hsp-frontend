@@ -1,0 +1,17 @@
+@font-face {
+  font-family: "Inter-Regular";
+  src: url("/src/assets/fonts/Inter-Regular.ttf");
+}
+
+:root {
+  font-family: "Inter-Regular", system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-size: 1.25rem;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
