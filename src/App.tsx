@@ -103,7 +103,7 @@ function App() {
 
   const present = new Date();
 
-  const dateValid =
+  const datesValid =
     startDate.year &&
     startDate.month &&
     endDate.year &&
@@ -111,6 +111,8 @@ function App() {
     new Date(startDate.year, MONTHS.indexOf(startDate.month), 1) <
       new Date(endDate.year, MONTHS.indexOf(startDate.month), 1) &&
     new Date(endDate.year, MONTHS.indexOf(endDate.month), 0) <= present;
+
+  const isValid = stockCountValid && datesValid;
 
   return (
     <>
@@ -168,7 +170,7 @@ function App() {
                   id={id}
                   values={values}
                   unit={id.split("-")[1]}
-                  valid={dateValid}
+                  valid={datesValid}
                   onChange={(value) => handleSelectChange(value, id)}
                 />
               ))}
@@ -186,7 +188,7 @@ function App() {
                   id={id}
                   values={values}
                   unit={id.split("-")[1]}
-                  valid={dateValid}
+                  valid={datesValid}
                   onChange={(value) => handleSelectChange(value, id)}
                 />
               ))}
@@ -196,7 +198,12 @@ function App() {
         <div className="flex justify-center mt-10">
           <button
             type="submit"
-            className="rounded-md bg-blue-500 py-3 px-22 text-white uppercase hover:cursor-pointer hover:bg-blue-700"
+            disabled={!isValid}
+            className={`rounded-md py-3 px-22 uppercase ${
+              isValid
+                ? "bg-blue-500 text-white hover:cursor-pointer hover:bg-blue-700"
+                : "bg-gray-400 text-gray-200 cursor-not-allowed"
+            }`}
           >
             Fetch data
           </button>
