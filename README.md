@@ -1,4 +1,4 @@
-# Historical Stock Prices - Frontend Client
+# Historical stock prices - Frontend client
 
 ## [Link to live demo](https://project.netlify.app/)
 
