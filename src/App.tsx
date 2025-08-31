@@ -64,14 +64,41 @@ function App() {
 
   const present = new Date();
 
-  const datesValid =
-    startDate.year &&
-    startDate.month &&
-    endDate.year &&
-    endDate.month &&
-    new Date(startDate.year, MONTHS.indexOf(startDate.month), 1) <
-      new Date(endDate.year, MONTHS.indexOf(startDate.month), 1) &&
-    new Date(endDate.year, MONTHS.indexOf(endDate.month), 0) <= present;
+  const getDateValidation = () => {
+    if (
+      !startDate.year ||
+      !startDate.month ||
+      !endDate.year ||
+      !endDate.month
+    ) {
+      return { isValid: null, error: null };
+    }
+
+    const fromDate = new Date(
+      startDate.year,
+      MONTHS.indexOf(startDate.month),
+      1
+    );
+    const toDate = new Date(endDate.year, MONTHS.indexOf(endDate.month), 1);
+    const endOfToMonth = new Date(
+      endDate.year,
+      MONTHS.indexOf(endDate.month) + 1,
+      0
+    );
+
+    if (fromDate >= toDate) {
+      return { isValid: false, error: "from-after-to" };
+    }
+
+    if (endOfToMonth > present) {
+      return { isValid: false, error: "to-after-present" };
+    }
+
+    return { isValid: true, error: null };
+  };
+
+  const dateValidation = getDateValidation();
+  const datesValid = dateValidation.isValid;
 
   const isValid = stockCountValid && datesValid;
 
@@ -237,6 +264,13 @@ function App() {
             </div>
           </div>
         </div>
+        {dateValidation.error && (
+          <div className="text-red-950 bg-red-100 border-l-red-400 border-l-3 rounded pl-2 py-1 mt-4">
+            {dateValidation.error === "from-after-to"
+              ? "From date should be earlier than to date"
+              : "To date should not be later than present day"}
+          </div>
+        )}
         <div className="flex justify-center mt-10">
           <button
             type="submit"
