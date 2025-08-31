@@ -1,6 +1,6 @@
 # Historical stock prices - Frontend client
 
-## [Link to live demo]([https://project.netlify.app/](https://historical-stock-prices.netlify.app/))
+## [Link to live demo](https://historical-stock-prices.netlify.app/)
 
 ## Description
 
