@@ -139,13 +139,19 @@ function App() {
       const response = await Promise.all(
         selectedStocks.map(async (stock) => {
           const res = await fetch(
-            `http://historical-stock-prices.onrender.com/api/v1/${stock}/${start}/${end}?apiKey=${
+            `https://historical-stock-prices.onrender.com/api/v1/${stock}/${start}/${end}?apiKey=${
               import.meta.env.VITE_API_KEY
             }`
           );
           return await res.json();
         })
       );
+
+      const errorResponse = response.find(({ message }) => message);
+      if (errorResponse) {
+        setRequestError(`Unable to fetch stock data. ${errorResponse.message}`);
+        return;
+      }
 
       const allDatesSet = new Set<string>();
       response.forEach((stock) => {
