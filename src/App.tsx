@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Checkbox from "./components/checkbox";
 import Select from "./components/select";
+import Footer from "./components/footer.tsx";
 import { STOCKS, START, END, MONTHS } from "./constants/appData.ts";
 import { Line } from "react-chartjs-2";
 import {
@@ -168,7 +169,7 @@ function App() {
         </p>
       </div>
       <form onSubmit={handleSubmit}>
-        <h2 className="pb-3 text-slate-700 border-b-2 border-slate-300 mb-5 uppercase font-bold">
+        <h2 className="pb-3 text-slate-700 border-b border-slate-300 mb-5 uppercase font-bold">
           Select stocks
         </h2>
         <div
@@ -195,7 +196,7 @@ function App() {
             />
           ))}
         </div>
-        <h2 className="pb-3 text-slate-700 border-b-2 border-slate-300 mt-8 mb-5 uppercase font-bold">
+        <h2 className="pb-3 text-slate-700 border-b border-slate-300 mt-8 mb-5 uppercase font-bold">
           Date range
         </h2>
         <div className="md:flex md:flex-row md:justify-between text-slate-700">
@@ -260,6 +261,7 @@ function App() {
           {chartData && <Line options={options} data={chartData} />}
         </div>
       </div>
+      <Footer />
     </>
   );
 }

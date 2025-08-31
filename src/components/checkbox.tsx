@@ -19,7 +19,7 @@ export default function Checkbox({
     <div className="flex flex-col">
       <label
         htmlFor={id}
-        className={`font-bold border-2 rounded-md py-2 text-center text-slate-700
+        className={`font-bold border-2 rounded-md py-2 text-center text-slate-700 transition-colors duration-200
           ${disabled ? "opacity-50 cursor-not-allowed" : "hover:cursor-pointer"}
           ${
             checked
