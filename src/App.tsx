@@ -135,7 +135,7 @@ function App() {
       const response = await Promise.all(
         selectedStocks.map(async (stock) => {
           const res = await fetch(
-            `http://localhost:8080/api/historical/${stock}/${start}/${end}?apiKey=BDaKTO4e0AN41pDBRO1ziCrDcVqlV5eQ`
+            `http://historical-stock-prices.onrender.com/api/v1/${stock}/${start}/${end}?apiKey=BDaKTO4e0AN41pDBRO1ziCrDcVqlV5eQ`
           );
           return await res.json();
         })
