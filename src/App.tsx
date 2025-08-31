@@ -42,6 +42,7 @@ function App() {
     month: null,
   });
   const [chartData, setChartData] = useState<any | null>(null);
+  const [requestError, setRequestError] = useState<string | null>(null);
 
   const handleCheckboxChange = (id: string) => {
     setSelectedStocks((prev) =>
@@ -107,6 +108,9 @@ function App() {
 
     if (!isValid) return;
 
+    setRequestError(null);
+    setChartData(null);
+
     const COLORS = ["#c27aff", "#9ae600", "#ff8904"];
     const start = `${startDate.year}-${String(
       MONTHS.indexOf(startDate.month!) + 1
@@ -170,6 +174,7 @@ function App() {
       setChartData({ labels, datasets });
     } catch (err) {
       console.error("Failed to fetch data", err);
+      setRequestError(`Unable to fetch stock data. ${err}`);
     }
   };
 
@@ -285,16 +290,22 @@ function App() {
           </button>
         </div>
       </form>
-      <div className="mt-20 overflow-x-scroll">
-        <div
-          className="relative min-h-64 min-w-80"
-          style={{
-            height: "450px",
-          }}
-        >
-          {chartData && <Line options={options} data={chartData} />}
+      {requestError ? (
+        <div className="text-red-950 bg-red-100 border-l-red-400 border-l-3 rounded pl-2 py-1 mt-10">
+          {requestError}
         </div>
-      </div>
+      ) : (
+        <div className="mt-20 overflow-x-scroll">
+          <div
+            className="relative min-h-64 min-w-80"
+            style={{
+              height: "450px",
+            }}
+          >
+            {chartData && <Line options={options} data={chartData} />}
+          </div>
+        </div>
+      )}
       <Footer />
     </>
   );
