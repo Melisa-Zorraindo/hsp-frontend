@@ -1,11 +1,13 @@
 @import "tailwindcss";
 
 @theme {
+  --breakpoint-xs: 21.25rem;
+  --breakpoint-sm: 23.5rem;
   --breakpoint-md: 53.75rem;
 }
 
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1.5rem;
 }

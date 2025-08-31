@@ -30,7 +30,7 @@ export default function Select({
       name={name}
       id={id}
       onChange={(e) => onChange(e.target.value)}
-      className={`border-2 ${getBorderClass()} rounded-md py-2 pl-2 pr-16 md:pr-22 xl:pr-36 mb-5 text-sm text-start`}
+      className={`border-2 ${getBorderClass()} rounded-md py-2 pl-2 xs:pr-18 sm:pr-22 xl:pr-36 mb-5 text-sm text-start`}
     >
       <option value="select">
         {unit.charAt(0).toUpperCase() + unit.slice(1)}

@@ -84,6 +84,7 @@ function App() {
       MONTHS.indexOf(startDate.month!) + 1
     ).padStart(2, "0")}-01`;
 
+    // here so that typescript doesn't complain
     if (!endDate.year || !endDate.month) {
       throw new Error("End date is not set");
     }
@@ -112,18 +113,31 @@ function App() {
         })
       );
 
-      const labels = Object.keys(response[0].prices)
-        .reverse()
-        .map((l) => {
-          const [year, month] = l.split("-");
-          return `${month}-${year}`;
+      const allDatesSet = new Set<string>();
+      response.forEach((stock) => {
+        Object.keys(stock.prices).forEach((date) => allDatesSet.add(date));
+      });
+
+      const allDates = Array.from(allDatesSet).sort();
+      const labels = allDates.map((date) => {
+        const [year, month] = date.split("-");
+        return `${month}-${year}`;
+      });
+
+      const datasets = response.map((json, idx) => {
+        const data = allDates.map((date) => {
+          return json.prices[date] !== undefined
+            ? parseFloat(json.prices[date])
+            : null;
         });
 
-      const datasets = response.map((json, idx) => ({
-        label: json.symbol,
-        data: Object.values(json.prices).reverse(),
-        borderColor: COLORS[idx % COLORS.length],
-      }));
+        return {
+          label: json.symbol,
+          data: data,
+          borderColor: COLORS[idx % COLORS.length],
+          spanGaps: false,
+        };
+      });
 
       setChartData({ labels, datasets });
     } catch (err) {
@@ -131,11 +145,19 @@ function App() {
     }
   };
 
-  const options = {};
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: false,
+      },
+    },
+  };
 
   return (
     <>
-      <div className="text-center text-slate-700">
+      <div className="text-center text-slate-700 md:text-lg">
         <h1 className="text-5xl tracking-tight sm:text-6xl font-bold">
           Historical stock prices
         </h1>
@@ -228,8 +250,15 @@ function App() {
           </button>
         </div>
       </form>
-      <div className="mt-20">
-        {chartData && <Line options={options} data={chartData} />}
+      <div className="mt-20 overflow-x-scroll">
+        <div
+          className="relative min-h-64 min-w-80"
+          style={{
+            height: "450px",
+          }}
+        >
+          {chartData && <Line options={options} data={chartData} />}
+        </div>
       </div>
     </>
   );
