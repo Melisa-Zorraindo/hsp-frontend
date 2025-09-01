@@ -43,6 +43,7 @@ function App() {
   });
   const [chartData, setChartData] = useState<any | null>(null);
   const [requestError, setRequestError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleCheckboxChange = (id: string) => {
     setSelectedStocks((prev) =>
@@ -108,6 +109,7 @@ function App() {
 
     if (!isValid) return;
 
+    setIsLoading(true);
     setRequestError(null);
     setChartData(null);
 
@@ -179,9 +181,11 @@ function App() {
         };
       });
 
+      setIsLoading(false);
       setChartData({ labels, datasets });
     } catch (err) {
       console.error("Failed to fetch data", err);
+      setIsLoading(false);
       setRequestError(`Unable to fetch stock data. ${err}`);
     }
   };
@@ -291,13 +295,18 @@ function App() {
             className={`rounded-md py-3 px-22 uppercase ${
               isValid
                 ? "bg-blue-500 text-white hover:cursor-pointer hover:bg-blue-700"
-                : "bg-gray-400 text-gray-200 cursor-not-allowed"
+                : "bg-slate-400 text-slate-200 cursor-not-allowed"
             }`}
           >
             Fetch data
           </button>
         </div>
       </form>
+      {isLoading && (
+        <div className="flex justify-center mt-10">
+          <div className="w-10 h-10 border-4 border-t-blue-400 border-slate-300 rounded-full animate-spin"></div>
+        </div>
+      )}
       {requestError ? (
         <div className="text-red-950 bg-red-100 border-l-red-400 border-l-3 rounded pl-2 py-1 mt-10">
           {requestError}
